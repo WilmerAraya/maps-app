@@ -1,10 +1,12 @@
 import { Box, InputAdornment, TextField } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useContext, useRef, useState } from 'react';
+import { PlacesContext } from '../context';
 
 export const SearchBar = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const [lastSearch, setLastSearch] = useState<string>('');
+  const { searchPlacesByQuery } = useContext(PlacesContext);
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.trim(); // Remove leading/trailing whitespace
@@ -16,7 +18,7 @@ export const SearchBar = () => {
     const isValidSearch = (value: string): boolean => {
       if (!value) return false; // Empty input check
       if (value.length < 2) return false; // Minimum length check
-      if (value === lastSearch) return false; // Duplicate search check
+      if (value.toLowerCase() === lastSearch.toLowerCase()) return false; // Duplicate search check
       return true;
     };
 
@@ -25,6 +27,7 @@ export const SearchBar = () => {
     // Set a new debounced timeout
     debounceRef.current = setTimeout(() => {
       setLastSearch(value); // Update the last searched value
+      searchPlacesByQuery(value);
     }, 350);
   };
 
