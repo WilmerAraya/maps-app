@@ -1,14 +1,32 @@
-import { useContext } from 'react';
-import { PlacesContext } from '../context';
+import { useContext, useLayoutEffect, useRef } from 'react';
+import { Map } from 'mapbox-gl';
 import { Box } from '@mui/material';
+
+import { PlacesContext } from '../context';
 import { Loading } from './Loading';
 
 export const MapView = () => {
   const { isLoading, userLocation } = useContext(PlacesContext);
+  const mapContainer = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!isLoading && mapContainer.current) {
+      mapContainer.current.innerHTML = '';
+
+      const map = new Map({
+        container: mapContainer.current!, // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        center: userLocation, // starting position [lng, lat]
+        zoom: 14, // starting zoom
+      });
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     return <Loading />;
   }
 
-  return <Box>{userLocation?.join(', ')}</Box>;
+  return (
+    <Box ref={mapContainer} sx={{ height: '100vh', width: '100vw' }}></Box>
+  );
 };

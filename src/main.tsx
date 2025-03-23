@@ -1,14 +1,14 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { MapsApp } from './MapsApp';
-
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import mapboxgl from 'mapbox-gl';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './themes';
+import { MapsApp } from './MapsApp';
+
+import './assets/fonts.css';
+
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 if (!navigator.geolocation) {
   alert('Geolocation is not available');

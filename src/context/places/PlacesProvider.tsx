@@ -23,9 +23,13 @@ export const PlacesProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(placesReducer, INITIAL_STATE);
 
   useEffect(() => {
-    getUserLocation().then((lngLat) =>
-      dispatch({ type: PlacesActions.SET_USER_LOCATION, payload: lngLat })
-    );
+    getUserLocation()
+      .then((lngLat) =>
+        dispatch({ type: PlacesActions.SET_USER_LOCATION, payload: lngLat })
+      )
+      .catch(() => {
+        console.error('Error getting user location');
+      });
   }, []);
 
   return (
