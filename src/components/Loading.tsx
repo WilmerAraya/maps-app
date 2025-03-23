@@ -1,8 +1,6 @@
-import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 export const Loading = () => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
