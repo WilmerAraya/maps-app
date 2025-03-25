@@ -19,8 +19,6 @@ export const SearchResults = () => {
     return <LoadingPlaces />;
   }
 
-  console.log(searchQuery);
-
   if (places.length === 0 && searchQuery.length > 0) {
     return (
       <NoPlacesContainer>
