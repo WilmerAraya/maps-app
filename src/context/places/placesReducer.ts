@@ -8,6 +8,10 @@ type PlacesAction =
       payload: [number, number];
     }
   | {
+      type: PlacesActions.SET_SEARCH_QUERY;
+      payload: string;
+    }
+  | {
       type: PlacesActions.SET_SEARCHING_PLACES;
     }
   | {
@@ -22,6 +26,12 @@ export const placesReducer = (state: PlacesState, action: PlacesAction): PlacesS
         ...state,
         isLoading: false,
         userLocation: action.payload,
+      };
+
+    case PlacesActions.SET_SEARCH_QUERY:
+      return {
+        ...state,
+        searchQuery: action.payload,
       };
 
     case PlacesActions.SET_SEARCHING_PLACES:

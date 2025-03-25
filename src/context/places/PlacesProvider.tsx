@@ -10,6 +10,7 @@ import { Feature, PlacesResponse } from '../../interfaces/places';
 export interface PlacesState {
   isLoading: boolean;
   userLocation?: [number, number]; // latitude, longitude. Optional
+  searchQuery: string;
   isSearchingPlaces: boolean;
   places: Feature[];
 }
@@ -17,6 +18,7 @@ export interface PlacesState {
 const INITIAL_STATE: PlacesState = {
   isLoading: true,
   userLocation: undefined,
+  searchQuery: '',
   isSearchingPlaces: false,
   places: [],
 };
@@ -33,7 +35,12 @@ export const PlacesProvider = ({ children }: Props) => {
   }, []);
 
   const searchPlacesByQuery = async (query: string): Promise<Feature[]> => {
-    if (query.length < 2) return [];
+    dispatch({ type: PlacesActions.SET_SEARCH_QUERY, payload: query });
+
+    if (query.length === 0) {
+      dispatch({ type: PlacesActions.SET_PLACES, payload: [] });
+      return [];
+    }
     if (!state.userLocation) throw new Error('User location not found');
 
     dispatch({ type: PlacesActions.SET_SEARCHING_PLACES });

@@ -2,6 +2,7 @@ import { Box, InputAdornment, TextField } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { ChangeEvent, useContext, useRef, useState } from 'react';
 import { PlacesContext } from '../context';
+import { SearchResults } from '.';
 
 export const SearchBar = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -16,8 +17,6 @@ export const SearchBar = () => {
 
     // Validations
     const isValidSearch = (value: string): boolean => {
-      if (!value) return false; // Empty input check
-      if (value.length < 2) return false; // Minimum length check
       if (value.toLowerCase() === lastSearch.toLowerCase()) return false; // Duplicate search check
       return true;
     };
@@ -39,6 +38,12 @@ export const SearchBar = () => {
         left: '20px',
         zIndex: 999,
         boxShadow: 8,
+        width: '300px',
+        // Fondo el color del fondo del tema de MUI, con algo de transparencia solo si es dark mode
+        backgroundColor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),
+        borderRadius: '10px',
+        paddingTop: '8px',
+        px: '8px',
       }}
     >
       <TextField
@@ -54,13 +59,15 @@ export const SearchBar = () => {
         placeholder="Search for places"
         variant="standard"
         sx={{
-          width: '300px',
+          width: '100%',
           '& .MuiInputBase-root': {
             padding: '6px',
           },
         }}
         onChange={handleSearch}
       />
+
+      <SearchResults />
     </Box>
   );
 };
