@@ -1,14 +1,15 @@
 import { useContext } from 'react';
 import { Divider, List, Typography } from '@mui/material';
 import DirectionsIcon from '@mui/icons-material/Directions';
-import { LoadingPlaces } from '..';
+
 import {
-  NoPlacesContainer,
-  PlacesContainer,
-  PlaceListItem,
   AddressText,
   DirectionsButton,
+  NoPlacesContainer,
+  PlaceListItem,
+  PlacesContainer,
 } from './SearchResults.styles';
+import { LoadingPlaces } from '..';
 import { PlacesContext } from '../../context';
 
 export const SearchResults = () => {
