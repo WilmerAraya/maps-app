@@ -5,15 +5,20 @@ import { placesReducer } from './placesReducer';
 import { getUserLocation } from '../../helpers/getUserLocation';
 import { PlacesActions } from '../../constants';
 import { searchApi } from '../../apis';
+import { Feature, PlacesResponse } from '../../interfaces/places';
 
 export interface PlacesState {
   isLoading: boolean;
   userLocation?: [number, number]; // latitude, longitude. Optional
+  isSearchingPlaces: boolean;
+  places: Feature[];
 }
 
 const INITIAL_STATE: PlacesState = {
   isLoading: true,
   userLocation: undefined,
+  isSearchingPlaces: false,
+  places: [],
 };
 
 interface Props {
@@ -24,25 +29,25 @@ export const PlacesProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(placesReducer, INITIAL_STATE);
 
   useEffect(() => {
-    getUserLocation().then((lngLat) =>
-      dispatch({ type: PlacesActions.SET_USER_LOCATION, payload: lngLat })
-    );
+    getUserLocation().then((lngLat) => dispatch({ type: PlacesActions.SET_USER_LOCATION, payload: lngLat }));
   }, []);
 
-  const searchPlacesByQuery = async (query: string) => {
+  const searchPlacesByQuery = async (query: string): Promise<Feature[]> => {
     if (query.length < 2) return [];
     if (!state.userLocation) throw new Error('User location not found');
 
-    const resp = await searchApi.get('', {
+    dispatch({ type: PlacesActions.SET_SEARCHING_PLACES });
+
+    const resp = await searchApi.get<PlacesResponse>('', {
       params: {
         q: query,
         proximity: state.userLocation.join(','),
       },
     });
 
-    console.log(resp.data);
+    dispatch({ type: PlacesActions.SET_PLACES, payload: resp.data.features });
 
-    return resp.data;
+    return resp.data.features;
   };
 
   return (
