@@ -16,9 +16,7 @@ if (!navigator.geolocation) {
 }
 
 const Root = () => {
-  const prefersDarkMode = window.matchMedia(
-    '(prefers-color-scheme: dark)'
-  ).matches;
+  const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const theme = prefersDarkMode ? darkTheme : lightTheme;
 
   return (

@@ -23,16 +23,11 @@ export const MapProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(MapReducer, INITIAL_STATE);
   const appTheme = useTheme();
 
-  const myLocationPopup = new Popup().setHTML(
-    '<h5 style="color: #000;">You are here!</h5>'
-  );
+  const myLocationPopup = new Popup().setHTML('<h5 style="color: #000;">You are here!</h5>');
 
   const setMap = (map: Map) => {
     const primaryColor = appTheme.palette.primary.main;
-    new Marker({ color: primaryColor })
-      .setLngLat(map.getCenter())
-      .setPopup(myLocationPopup)
-      .addTo(map);
+    new Marker({ color: primaryColor }).setLngLat(map.getCenter()).setPopup(myLocationPopup).addTo(map);
 
     dispatch({ type: MapActions.SET_MAP, payload: map });
   };

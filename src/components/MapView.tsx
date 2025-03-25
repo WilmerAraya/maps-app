@@ -35,7 +35,5 @@ export const MapView = () => {
     return <Loading />;
   }
 
-  return (
-    <Box ref={mapContainer} sx={{ height: '100vh', width: '100vw' }}></Box>
-  );
+  return <Box ref={mapContainer} sx={{ height: '100vh', width: '100vw' }}></Box>;
 };
