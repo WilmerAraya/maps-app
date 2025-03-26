@@ -1,6 +1,6 @@
 import { LngLatBounds, Map, Marker, Popup, SourceSpecification } from 'mapbox-gl';
 import { MapContext } from './MapContext';
-import { JSX, useContext, useEffect, useReducer } from 'react';
+import { JSX, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
 import { MapReducer } from './MapReducer';
 import { MapActions } from '../../constants';
@@ -31,20 +31,45 @@ export const MapProvider = ({ children }: Props) => {
   const { places } = useContext(PlacesContext);
   const appTheme = useTheme();
 
+  const routeMarkerRef = useRef<Marker | null>(null);
+  const destinationMarkerRef = useRef<Marker | null>(null);
+  const [destinationPlaceId, setDestinationPlaceId] = useState<string | null>(null);
+
+  // Este efecto solo se encarga de los marcadores de búsqueda normales
   useEffect(() => {
-    state.markers?.forEach((marker) => marker.remove());
+    // Eliminar todos los marcadores de búsqueda anteriores
+    state.markers?.forEach((marker) => {
+      // No eliminar el marcador de destino si existe
+      if (destinationMarkerRef.current && marker === destinationMarkerRef.current) {
+        return;
+      }
+      marker.remove();
+    });
 
     const newMarkers: Marker[] = [];
 
+    // Mantener el marcador de destino si existe
+    if (destinationMarkerRef.current) {
+      newMarkers.push(destinationMarkerRef.current);
+    }
+
+    // Crear marcadores para los lugares de búsqueda
     for (const place of places) {
       const { longitude, latitude } = place.properties.coordinates;
+      const coords: [number, number] = [longitude, latitude];
+
+      // No crear un nuevo marcador si ya es el destino
+      if (destinationPlaceId && place.id === destinationPlaceId) {
+        continue;
+      }
+
       const popUp = new Popup().setHTML(`
           <h2>${place.properties.name}</h2>
           <p>${place.properties.full_address}</p>
       `);
 
       const marker = new Marker({ color: appTheme.palette.grey[500] })
-        .setLngLat([longitude, latitude])
+        .setLngLat(coords)
         .setPopup(popUp)
         .addTo(state.map!);
       newMarkers.push(marker);
@@ -62,12 +87,65 @@ export const MapProvider = ({ children }: Props) => {
     dispatch({ type: MapActions.SET_MAP, payload: map });
   };
 
-  const getRouteBeetweenPlaces = async (origin: [number, number], destination: [number, number]) => {
+  const getRouteBeetweenPlaces = async (
+    origin: [number, number],
+    destination: [number, number],
+    destinationPlaceId: string
+  ) => {
     const resp = await directionsApi.get<DirectionsResponse>(`/${origin.join(',')};${destination.join(',')}`);
-    const { coordinates } = resp.data.routes[0].geometry;
+    const { distance, duration, geometry } = resp.data.routes[0];
+    const { coordinates } = geometry;
+
+    // Guardar el ID del lugar de destino
+    setDestinationPlaceId(destinationPlaceId);
+
+    // Buscar el lugar por su ID
+    const destinationPlace = places.find((place) => place.id === destinationPlaceId);
+
+    // Si ya existe un marcador de destino, eliminarlo
+    if (destinationMarkerRef.current) {
+      destinationMarkerRef.current.remove();
+    }
+
+    // Crear el popup con la información del lugar si existe
+    let popupHtml = '<h3>Destination</h3>';
+
+    if (destinationPlace) {
+      popupHtml = `
+        <h2>${destinationPlace.properties.name}</h2>
+        <p>${destinationPlace.properties.full_address}</p>
+        <p><strong>Destination</strong></p>
+      `;
+    }
+
+    // Crear un nuevo marcador de destino con un color distintivo
+    destinationMarkerRef.current = new Marker({ color: appTheme.palette.success.main })
+      .setLngLat(destination)
+      .setPopup(new Popup().setHTML(popupHtml))
+      .addTo(state.map!);
+
+    const midPointIndex = Math.floor(coordinates.length / 2);
+    const midPoint: [number, number] = [coordinates[midPointIndex][0], coordinates[midPointIndex][1]];
+
+    const distanceKm = (distance / 1000).toFixed(1);
+    const durationMin = Math.round(duration / 60);
+
+    const routePopup = new Popup({ closeOnClick: true }).setHTML(`
+      <h3>Distance: ${distanceKm} km</h3>
+      <h3>Duration: ${durationMin} min</h3>
+    `);
+
+    if (routeMarkerRef.current) {
+      routeMarkerRef.current.remove();
+    }
+
+    routeMarkerRef.current = new Marker({ color: appTheme.palette.secondary.main })
+      .setLngLat(midPoint)
+      .setPopup(routePopup)
+      .addTo(state.map!)
+      .togglePopup();
 
     const bounds = new LngLatBounds(origin, origin);
-
     for (const coord of coordinates) {
       const newCoord: [number, number] = [coord[0], coord[1]];
       bounds.extend(newCoord);
@@ -114,6 +192,29 @@ export const MapProvider = ({ children }: Props) => {
     });
   };
 
+  const clearRoute = () => {
+    // Remover el marcador de ruta
+    if (routeMarkerRef.current) {
+      routeMarkerRef.current.remove();
+      routeMarkerRef.current = null;
+    }
+
+    // Remover el marcador de destino
+    if (destinationMarkerRef.current) {
+      destinationMarkerRef.current.remove();
+      destinationMarkerRef.current = null;
+    }
+
+    // Limpiar el ID de destino
+    setDestinationPlaceId(null);
+
+    // Remover la capa y fuente de la ruta
+    if (state.map?.getSource('route')) {
+      state.map.removeLayer('route');
+      state.map.removeSource('route');
+    }
+  };
+
   return (
     <MapContext.Provider
       value={{
@@ -122,6 +223,7 @@ export const MapProvider = ({ children }: Props) => {
         // Methods
         setMap,
         getRouteBeetweenPlaces,
+        clearRoute,
       }}
     >
       {children}

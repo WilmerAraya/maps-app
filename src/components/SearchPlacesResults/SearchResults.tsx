@@ -28,7 +28,7 @@ export const SearchResults = () => {
   const onClickDirections = (place: Feature) => {
     if (!userLocation) return;
     const { longitude: destinationLng, latitude: destinationLat } = place.properties.coordinates;
-    getRouteBeetweenPlaces(userLocation, [destinationLng, destinationLat]);
+    getRouteBeetweenPlaces(userLocation, [destinationLng, destinationLat], place.id);
   };
 
   if (isSearchingPlaces) {
