@@ -2,26 +2,25 @@
 
 A simple React application for displaying interactive maps, built with Vite, TypeScript, and Material UI.
 
+## Live Demo
+
+Check out the live application at: [https://wilmeraraya.github.io/maps-app/](https://wilmeraraya.github.io/maps-app/)
+
 ## Features
-- Interactive map display (e.g., Leaflet integration).
-- Light/dark theme support with Material UI.
-- Responsive design.
+
+- Interactive map display using Mapbox GL JS
+- Search locations and find places of interest
+- Get directions between your current location and destinations
+- Display distance and duration information for routes
+- Responsive design for both desktop and mobile devices
+- Light/dark theme support with Material UI
 
 ## Tech Stack
-- **React**: Frontend library.
-- **TypeScript**: Static typing.
-- **Vite**: Fast build tool.
-- **Material UI (MUI)**: UI components and theming.
-- **npm**: Package manager.
 
-## Getting Started
-
-### Prerequisites
-- Node.js (v22.14.0 recommended)
-- npm
-
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd maps-app
+- **React 19**: Frontend library
+- **TypeScript**: Static typing
+- **Vite**: Fast build tool
+- **Material UI (MUI) v6**: UI components and theming
+- **Mapbox GL JS**: Interactive maps and geolocation services
+- **Axios**: HTTP client for API requests
+- **GitHub Pages**: Hosting platform
