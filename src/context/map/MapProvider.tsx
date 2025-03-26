@@ -39,7 +39,10 @@ export const MapProvider = ({ children }: Props) => {
           <p>${place.properties.full_address}</p>
       `);
 
-      const marker = new Marker().setLngLat([longitude, latitude]).setPopup(popUp).addTo(state.map!);
+      const marker = new Marker({ color: appTheme.palette.grey[500] })
+        .setLngLat([longitude, latitude])
+        .setPopup(popUp)
+        .addTo(state.map!);
       newMarkers.push(marker);
     }
 

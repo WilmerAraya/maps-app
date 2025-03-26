@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Divider, List, Typography } from '@mui/material';
 import DirectionsIcon from '@mui/icons-material/Directions';
 
@@ -10,10 +10,20 @@ import {
   PlacesContainer,
 } from './SearchResults.styles';
 import { LoadingPlaces } from '..';
-import { PlacesContext } from '../../context';
+import { MapContext, PlacesContext } from '../../context';
+import { Feature } from '../../interfaces/places';
 
 export const SearchResults = () => {
   const { places, searchQuery, isSearchingPlaces } = useContext(PlacesContext);
+  const { map } = useContext(MapContext);
+
+  const [activeId, setActiveId] = useState('');
+
+  const onClickPlace = (place: Feature) => {
+    setActiveId(place.id);
+    const { longitude, latitude } = place.properties.coordinates;
+    map?.flyTo({ center: [longitude, latitude], zoom: 14, essential: true });
+  };
 
   if (isSearchingPlaces) {
     return <LoadingPlaces />;
@@ -33,7 +43,7 @@ export const SearchResults = () => {
     <List>
       {places.map((place, index) => (
         <PlacesContainer key={place.id}>
-          <PlaceListItem>
+          <PlaceListItem onClick={() => onClickPlace(place)} isActive={place.id === activeId}>
             <Typography variant="h6">{place.properties.name}</Typography>
             <AddressText>{place.properties.full_address}</AddressText>
             <DirectionsButton variant="contained" endIcon={<DirectionsIcon />}>

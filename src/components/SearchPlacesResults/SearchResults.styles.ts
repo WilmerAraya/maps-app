@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { Box, ListItem, Button } from '@mui/material';
+import { Box, Button, ListItemButton } from '@mui/material';
 
 export const NoPlacesContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -15,12 +15,20 @@ export const PlacesContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
 }));
 
-export const PlaceListItem = styled(ListItem)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: theme.spacing(1),
-}));
+export const PlaceListItem = styled(ListItemButton, {
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})<{ isActive?: boolean }>(({ theme, isActive }) => {
+  const activeBackgroundColor = theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[300];
+
+  return {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: theme.spacing(1),
+    backgroundColor: isActive ? activeBackgroundColor : 'transparent',
+    borderRadius: theme.shape.borderRadius,
+  };
+});
 
 export const AddressText = styled('p')(({ theme }) => ({
   fontSize: '12px',
