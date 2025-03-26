@@ -1,4 +1,4 @@
-import { Map, Marker, Popup } from 'mapbox-gl';
+import { LngLatBounds, Map, Marker, Popup, SourceSpecification } from 'mapbox-gl';
 import { MapContext } from './MapContext';
 import { JSX, useContext, useEffect, useReducer } from 'react';
 
@@ -64,6 +64,54 @@ export const MapProvider = ({ children }: Props) => {
 
   const getRouteBeetweenPlaces = async (origin: [number, number], destination: [number, number]) => {
     const resp = await directionsApi.get<DirectionsResponse>(`/${origin.join(',')};${destination.join(',')}`);
+    const { coordinates } = resp.data.routes[0].geometry;
+
+    const bounds = new LngLatBounds(origin, origin);
+
+    for (const coord of coordinates) {
+      const newCoord: [number, number] = [coord[0], coord[1]];
+      bounds.extend(newCoord);
+    }
+
+    state.map?.fitBounds(bounds, { padding: 300 });
+
+    const sourceData: SourceSpecification = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            id: 'route',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates,
+            },
+          },
+        ],
+      },
+    };
+
+    if (state.map?.getSource('route')) {
+      state.map.removeLayer('route');
+      state.map.removeSource('route');
+    }
+
+    state.map?.addSource('route', sourceData);
+    state.map?.addLayer({
+      id: 'route',
+      type: 'line',
+      source: 'route',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': appTheme.palette.primary.main,
+        'line-width': 4,
+      },
+    });
   };
 
   return (
