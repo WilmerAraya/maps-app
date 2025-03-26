@@ -58,6 +58,8 @@ export const MapProvider = ({ children }: Props) => {
     dispatch({ type: MapActions.SET_MAP, payload: map });
   };
 
+  const getRouteBeetweenPlaces = async (origin: [number, number], destination: [number, number]) => {};
+
   return (
     <MapContext.Provider
       value={{
@@ -65,6 +67,7 @@ export const MapProvider = ({ children }: Props) => {
 
         // Methods
         setMap,
+        getRouteBeetweenPlaces,
       }}
     >
       {children}
