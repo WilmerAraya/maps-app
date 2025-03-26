@@ -23,8 +23,8 @@ export const BtnMyLocation = () => {
       variant="contained"
       sx={{
         position: 'fixed',
-        right: '20px',
-        top: '20px',
+        left: '20px',
+        bottom: '40px',
         zIndex: 99,
       }}
       endIcon={<LocationOnIcon />}
