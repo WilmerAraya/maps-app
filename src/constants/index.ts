@@ -7,4 +7,5 @@ export enum PlacesActions {
 
 export enum MapActions {
   SET_MAP = 'SET_MAP',
+  SET_MARKERS = 'SET_MARKERS',
 }
