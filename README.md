@@ -1,6 +1,6 @@
 # Maps App
 
-A simple React application for displaying interactive maps, built with Vite, TypeScript, and Material UI.
+A simple React application for displaying interactive maps, built with Vite, TypeScript, and Material UI. This project was developed as a practice exercise during the [React: De cero a experto](https://www.udemy.com/course/react-pro/) course on Udemy.
 
 ## Live Demo
 
