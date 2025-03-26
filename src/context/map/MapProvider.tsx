@@ -1,10 +1,14 @@
 import { Map, Marker, Popup } from 'mapbox-gl';
 import { MapContext } from './MapContext';
 import { JSX, useContext, useEffect, useReducer } from 'react';
+
 import { MapReducer } from './MapReducer';
 import { MapActions } from '../../constants';
 import { useTheme } from '@mui/material';
 import { PlacesContext } from '../';
+
+import { directionsApi } from '../../apis';
+import { DirectionsResponse } from '../../interfaces/directions';
 
 export interface MapState {
   isMapReady: boolean;
@@ -58,7 +62,9 @@ export const MapProvider = ({ children }: Props) => {
     dispatch({ type: MapActions.SET_MAP, payload: map });
   };
 
-  const getRouteBeetweenPlaces = async (origin: [number, number], destination: [number, number]) => {};
+  const getRouteBeetweenPlaces = async (origin: [number, number], destination: [number, number]) => {
+    const resp = await directionsApi.get<DirectionsResponse>(`/${origin.join(',')};${destination.join(',')}`);
+  };
 
   return (
     <MapContext.Provider

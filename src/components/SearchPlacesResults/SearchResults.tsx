@@ -14,8 +14,8 @@ import { MapContext, PlacesContext } from '../../context';
 import { Feature } from '../../interfaces/places';
 
 export const SearchResults = () => {
-  const { places, searchQuery, isSearchingPlaces } = useContext(PlacesContext);
-  const { map } = useContext(MapContext);
+  const { places, searchQuery, isSearchingPlaces, userLocation } = useContext(PlacesContext);
+  const { map, getRouteBeetweenPlaces } = useContext(MapContext);
 
   const [activeId, setActiveId] = useState('');
 
@@ -23,6 +23,12 @@ export const SearchResults = () => {
     setActiveId(place.id);
     const { longitude, latitude } = place.properties.coordinates;
     map?.flyTo({ center: [longitude, latitude], zoom: 14, essential: true });
+  };
+
+  const onClickDirections = (place: Feature) => {
+    if (!userLocation) return;
+    const { longitude: destinationLng, latitude: destinationLat } = place.properties.coordinates;
+    getRouteBeetweenPlaces(userLocation, [destinationLng, destinationLat]);
   };
 
   if (isSearchingPlaces) {
@@ -46,7 +52,7 @@ export const SearchResults = () => {
           <PlaceListItem onClick={() => onClickPlace(place)} isActive={place.id === activeId}>
             <Typography variant="h6">{place.properties.name}</Typography>
             <AddressText>{place.properties.full_address}</AddressText>
-            <DirectionsButton variant="contained" endIcon={<DirectionsIcon />}>
+            <DirectionsButton onClick={() => onClickDirections(place)} variant="contained" endIcon={<DirectionsIcon />}>
               Directions
             </DirectionsButton>
           </PlaceListItem>
