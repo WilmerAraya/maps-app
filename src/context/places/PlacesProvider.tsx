@@ -57,6 +57,11 @@ export const PlacesProvider = ({ children }: Props) => {
     return resp.data.features;
   };
 
+  const clearPlaces = () => {
+    dispatch({ type: PlacesActions.SET_PLACES, payload: [] });
+    dispatch({ type: PlacesActions.SET_SEARCH_QUERY, payload: '' });
+  };
+
   return (
     <PlacesContext.Provider
       value={{
@@ -64,6 +69,7 @@ export const PlacesProvider = ({ children }: Props) => {
 
         // Methods
         searchPlacesByQuery,
+        clearPlaces,
       }}
     >
       {children}

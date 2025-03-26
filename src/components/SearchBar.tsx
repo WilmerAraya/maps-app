@@ -1,32 +1,30 @@
 import { Box, InputAdornment, TextField } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { ChangeEvent, useContext, useRef, useState } from 'react';
+import { ChangeEvent, useContext, useRef, useState, useEffect } from 'react';
 import { PlacesContext } from '../context';
 import { SearchResults } from '.';
 
 export const SearchBar = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  const [lastSearch, setLastSearch] = useState<string>('');
-  const { searchPlacesByQuery } = useContext(PlacesContext);
+  const { searchQuery, searchPlacesByQuery } = useContext(PlacesContext);
+
+  const [inputValue, setInputValue] = useState<string>(searchQuery);
+
+  useEffect(() => {
+    setInputValue(searchQuery);
+  }, [searchQuery]);
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.trim(); // Remove leading/trailing whitespace
+    const value = event.target.value;
 
-    // Clear the previous timeout
+    setInputValue(value);
+
+    const trimmedValue = value.trim();
+
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    // Validations
-    const isValidSearch = (value: string): boolean => {
-      if (value.toLowerCase() === lastSearch.toLowerCase()) return false; // Duplicate search check
-      return true;
-    };
-
-    if (!isValidSearch(value)) return;
-
-    // Set a new debounced timeout
     debounceRef.current = setTimeout(() => {
-      setLastSearch(value); // Update the last searched value
-      searchPlacesByQuery(value);
+      searchPlacesByQuery(trimmedValue);
     }, 350);
   };
 
@@ -39,7 +37,6 @@ export const SearchBar = () => {
         zIndex: 999,
         boxShadow: 8,
         width: '300px',
-        // Fondo el color del fondo del tema de MUI, con algo de transparencia solo si es dark mode
         backgroundColor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)'),
         borderRadius: '10px',
         paddingTop: '8px',
@@ -47,6 +44,8 @@ export const SearchBar = () => {
       }}
     >
       <TextField
+        id="search-places"
+        value={inputValue}
         slotProps={{
           input: {
             startAdornment: (

@@ -14,7 +14,7 @@ import { MapContext, PlacesContext } from '../../context';
 import { Feature } from '../../interfaces/places';
 
 export const SearchResults = () => {
-  const { places, searchQuery, isSearchingPlaces, userLocation } = useContext(PlacesContext);
+  const { places, searchQuery, isSearchingPlaces, userLocation, clearPlaces } = useContext(PlacesContext);
   const { map, getRouteBeetweenPlaces } = useContext(MapContext);
 
   const [activeId, setActiveId] = useState('');
@@ -28,7 +28,9 @@ export const SearchResults = () => {
   const onClickDirections = (place: Feature) => {
     if (!userLocation) return;
     const { longitude: destinationLng, latitude: destinationLat } = place.properties.coordinates;
+
     getRouteBeetweenPlaces(userLocation, [destinationLng, destinationLat], place.id);
+    clearPlaces();
   };
 
   if (isSearchingPlaces) {

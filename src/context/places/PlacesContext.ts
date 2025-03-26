@@ -10,6 +10,7 @@ export interface PlacesContextProps {
 
   // Methods
   searchPlacesByQuery: (query: string) => Promise<Feature[]>;
+  clearPlaces: () => void;
 }
 
 export const PlacesContext = createContext<PlacesContextProps>({} as PlacesContextProps);
