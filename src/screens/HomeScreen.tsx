@@ -1,5 +1,5 @@
 import { Box, useMediaQuery, useTheme } from '@mui/material';
-import { BtnMyLocation, MapView, ReactLogo, SearchBar } from '../components';
+import { BtnMyLocation, MapView, SearchBar } from '../components';
 
 export const HomeScreen = () => {
   const theme = useTheme();
@@ -38,17 +38,6 @@ export const HomeScreen = () => {
         }}
       >
         <BtnMyLocation />
-      </Box>
-
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: isMobile ? '20px' : '20px',
-          right: isMobile ? '10px' : '20px',
-          zIndex: 999,
-        }}
-      >
-        <ReactLogo />
       </Box>
     </Box>
   );
