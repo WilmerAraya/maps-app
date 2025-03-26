@@ -1,0 +1,13 @@
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+
+.mapboxgl-popup-content {
+    color: #000 !important; /* Black text color */
+    padding: 8px !important;
+    border-radius: 8px !important;
+    font-family: 'Roboto', sans-serif !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }

@@ -6,7 +6,7 @@ import { CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './themes';
 import { MapsApp } from './MapsApp';
 
-import './assets/fonts.css';
+import './assets/styles.css';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
